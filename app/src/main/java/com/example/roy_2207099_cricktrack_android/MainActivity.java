@@ -1,6 +1,8 @@
 package com.example.roy_2207099_cricktrack_android;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +22,26 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Button adminLogin = findViewById(R.id.btnAdminLogin);
+        Button userLogin = findViewById(R.id.btnUserLogin);
+        Button userRegister = findViewById(R.id.btnUserRegister);
+
+        adminLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AdminLogin.class);
+            startActivity(intent);
+            finish();
+        });
+
+        userLogin.setOnClickListener(v -> {
+
+        });
+
+        userRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(this, UserRegister.class);
+            startActivity(intent);
+            finish();
+        });
+
     }
 }

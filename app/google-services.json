@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216622738906",
+    "project_id": "cricktrack-aavas",
+    "storage_bucket": "cricktrack-aavas.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216622738906:android:40c573791bf14c0b5ee4e3",
+        "android_client_info": {
+          "package_name": "com.example.roy_2207099_cricktrack_android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDi2IUZ3HHY1VPrJynI_WAJiD2gYUuQt6c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,29 +1,32 @@
 package com.example.roy_2207099_cricktrack_android;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ContentValues;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class UserRegister extends AppCompatActivity {
 
     EditText userEmail, userPassword;
     TextView emailError;
     Button btnRegister, btnBackReg;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_register);
+
+        mAuth = FirebaseAuth.getInstance();
 
         userEmail = findViewById(R.id.userEmail);
         userPassword = findViewById(R.id.userPassword);
@@ -39,7 +42,6 @@ public class UserRegister extends AppCompatActivity {
         btnRegister.setOnClickListener(v -> onRegister());
         btnBackReg.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         });
@@ -49,68 +51,33 @@ public class UserRegister extends AppCompatActivity {
         String email = userEmail.getText().toString().trim();
         String pass = userPassword.getText().toString().trim();
 
-        if (email.isEmpty()) {
-            emailError.setText("");
-            btnRegister.setEnabled(false);
-            return;
-        }
-
         if (!isValidEmail(email)) {
             emailError.setText("Invalid email format");
             btnRegister.setEnabled(false);
         } else {
             emailError.setText("");
-            btnRegister.setEnabled(!pass.isEmpty());
+            btnRegister.setEnabled(pass.length() >= 6);
         }
     }
 
     private boolean isValidEmail(String email) {
-        return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void onRegister() {
-        String email = userEmail.getText().toString().trim().toLowerCase();
+        String email = userEmail.getText().toString().trim();
         String password = userPassword.getText().toString().trim();
-
-        if (email.isEmpty() || password.isEmpty()) {
-            showAlert("Error", "All fields are required!");
-            return;
-        }
-
-        DBHelper dbHelper = DBHelper.getInstance(this);
-        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
-            Cursor cursor = db.rawQuery("SELECT id FROM users WHERE username = ?", new String[]{email});
-            if (cursor.moveToFirst()) {
-                showAlert("Registration Failed", "Email already registered!");
-                cursor.close();
-                return;
-            }
-            cursor.close();
-
-            String hashedPassword = PasswordHash.hashPassword(password);
-
-            ContentValues values = new ContentValues();
-            values.put("username", email);
-            values.put("password", hashedPassword);
-
-            long newRowId = db.insert("users", null, values);
-
-            if (newRowId != -1) {
-                Cursor debugCursor = db.rawQuery("SELECT * FROM users", null);
-                while (debugCursor.moveToNext()) {
-                    android.util.Log.d("DB_CHECK", "User: " + debugCursor.getString(1));
-                }
-                debugCursor.close();
-                showAlert("Success", "Registration successful!");
-            }
-            else {
-                showAlert("Error", "Database insertion failed.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Registration failed. Try again!");
-        }
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, UserLogin.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        showAlert("Registration Failed", task.getException().getMessage());
+                    }
+                });
     }
 
     private TextWatcher simpleWatcher(Runnable r) {
@@ -125,7 +92,8 @@ public class UserRegister extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(msg)
-                .setPositiveButton("OK", null)
-                .show();
+                .setPositiveButton("OK", (dialog, which) -> {
+                    if(title.equals("Success")) finish();
+                }).show();
     }
 }

@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         userLogin.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, UserLogin.class);
+            startActivity(intent);
+            finish();
         });
 
         userRegister.setOnClickListener(v -> {

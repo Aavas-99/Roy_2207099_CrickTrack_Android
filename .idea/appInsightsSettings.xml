@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.roy_2207099_cricktrack_android" />
+                  <option name="mobileSdkAppId" value="1:216622738906:android:40c573791bf14c0b5ee4e3" />
+                  <option name="projectId" value="cricktrack-aavas" />
+                  <option name="projectNumber" value="216622738906" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

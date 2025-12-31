@@ -29,6 +29,9 @@ public class AdminLogin extends AppCompatActivity {
             }
             else if (adminEmail.equals("roy.aavas@gmail.com") && adminPass.equals("123")) {
                 Toast.makeText(this, "Admin Login Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, AdminDashboard1.class);
+                startActivity(intent);
+                finish();
             }
             else {
                 Toast.makeText(this, "Invalid Admin Credentials", Toast.LENGTH_SHORT).show();

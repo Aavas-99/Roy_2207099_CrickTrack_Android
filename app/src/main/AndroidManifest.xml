@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Roy_2207099_CrickTrack_Android">
         <activity
+            android:name=".UserDashboard1"
+            android:exported="false" />
+        <activity
             android:name=".AdminDashboard1"
             android:exported="false" />
         <activity

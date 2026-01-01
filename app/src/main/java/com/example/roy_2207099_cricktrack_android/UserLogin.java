@@ -57,7 +57,9 @@ public class UserLogin extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-
+                        Intent intent = new Intent(this, UserDashboard1.class);
+                        startActivity(intent);
+                        finish();
                     } else {
                         showAlert("Login Failed", "Invalid email or password.");
                     }

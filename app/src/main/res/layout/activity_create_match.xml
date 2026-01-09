@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f4f6f9"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="40dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:elevation="8dp"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create New Match"
+                android:textColor="#2196F3"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="25dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Team A:" android:textStyle="bold"/>
+            <EditText android:id="@+id/txtTeamA" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Enter Team A name" android:layout_marginBottom="15dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Team B:" android:textStyle="bold"/>
+            <EditText android:id="@+id/txtTeamB" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Enter Team B name" android:layout_marginBottom="15dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Overs:" android:textStyle="bold"/>
+            <EditText android:id="@+id/txtOvers" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="20" android:inputType="number" android:layout_marginBottom="15dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stadium:" android:textStyle="bold"/>
+            <EditText android:id="@+id/txtStadium" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Stadium Name" android:layout_marginBottom="15dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Date:" android:textStyle="bold"/>
+            <EditText android:id="@+id/datepicker" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Select Match Date" android:focusable="false" android:clickable="true" android:layout_marginBottom="25dp"/>
+
+            <Button android:id="@+id/btnStart" android:layout_width="match_parent" android:layout_height="55dp" android:text="Start Match" android:backgroundTint="#2196F3" android:textColor="#FFFFFF" android:layout_marginBottom="10dp"/>
+            <Button android:id="@+id/btnBack" android:layout_width="match_parent" android:layout_height="55dp" android:text="Back" android:backgroundTint="#757575" android:textColor="#FFFFFF"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

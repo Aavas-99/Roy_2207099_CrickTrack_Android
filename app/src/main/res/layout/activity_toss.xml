@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f4f6f9"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="30dp"
+        android:gravity="center_horizontal">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Player Entry and Toss Result" android:textSize="24sp" android:textStyle="bold" android:textColor="#2196F3" android:layout_marginBottom="25dp"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                <TextView android:id="@+id/lblteamA" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
+                <LinearLayout android:id="@+id/teamAList" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                <TextView android:id="@+id/lblteamB" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
+                <LinearLayout android:id="@+id/teamBList" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#DDDDDD" android:layout_marginVertical="20dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Toss Results" android:textSize="18sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Toss Winner:"/>
+        <RadioGroup android:id="@+id/rgToss" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbTeamA" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            <RadioButton android:id="@+id/rbTeamB" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        </RadioGroup>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Decision:"/>
+        <RadioGroup android:id="@+id/rgDecision" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbBat" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bat" />
+            <RadioButton android:id="@+id/rbBowl" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bowl" />
+        </RadioGroup>
+
+        <Button android:id="@+id/btnContinue" android:layout_width="match_parent" android:layout_height="55dp" android:text="Continue" android:backgroundTint="#2196F3" android:textColor="#FFFFFF" android:layout_marginTop="25dp"/>
+    </LinearLayout>
+</ScrollView>

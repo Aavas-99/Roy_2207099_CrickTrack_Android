@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "216622738906",
+    "firebase_url": "https://cricktrack-aavas-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "cricktrack-aavas",
     "storage_bucket": "cricktrack-aavas.firebasestorage.app"
   },

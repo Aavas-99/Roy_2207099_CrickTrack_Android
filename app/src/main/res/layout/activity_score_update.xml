@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E0E0E0"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#2E7D32"
+        app:title="Live Match Scoring"
+        app:titleTextColor="#FFFFFF" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                android:layout_marginBottom="8dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/etInningsInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Team, 1st inning"
+                        android:textStyle="bold"
+                        android:background="@null"
+                        android:inputType="textCapWords" />
+
+                    <LinearLayout
+                        android:id="@+id/scoreBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/etInningsInfo"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/etScore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 - 0"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold"
+                            android:background="@null"
+                            android:inputType="text" />
+
+                        <TextView
+                            android:id="@+id/etOvers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="(0.0)"
+                            android:textSize="24sp"
+                            android:background="@null"
+                            android:inputType="numberDecimal" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                android:layout_marginBottom="8dp">
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:stretchColumns="0">
+
+                    <TableRow android:background="#F5F5F5" android:paddingVertical="8dp">
+                        <TextView android:text="Batsman" android:textStyle="bold" android:paddingEnd="10dp"/>
+                        <TextView android:text="R" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                        <TextView android:text="B" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                        <TextView android:text="4s" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                        <TextView android:text="6s" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                    </TableRow>
+
+                    <TableRow android:paddingVertical="8dp">
+                        <TextView android:id="@+id/etStriker" android:layout_width="wrap_content" android:text="Striker*" android:textColor="#2E7D32" android:background="@null" android:inputType="textPersonName"/>
+                        <TextView android:id="@+id/etStrikerRuns" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etStrikerBalls" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etStriker4s" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etStriker6s" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                    </TableRow>
+
+                    <TableRow android:paddingVertical="8dp">
+                        <TextView android:id="@+id/etNonStriker" android:layout_width="wrap_content" android:text="Non-Striker" android:textColor="#2E7D32" android:background="@null" android:inputType="textPersonName"/>
+                        <TextView android:id="@+id/etNonStrikerRuns" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etNonStrikerBalls" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etNonStriker4s" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etNonStriker6s" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                    </TableRow>
+
+                    <View android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginVertical="8dp"/>
+
+                    <TableRow android:background="#F5F5F5" android:paddingVertical="8dp">
+                        <TextView android:text="Bowler" android:textStyle="bold" android:paddingEnd="10dp"/>
+                        <TextView android:text="O" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                        <TextView android:text="M" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                        <TextView android:text="R" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                        <TextView android:text="W" android:gravity="center" android:paddingHorizontal="12dp" android:textStyle="bold"/>
+                    </TableRow>
+
+                    <TableRow android:paddingVertical="8dp">
+                        <TextView android:id="@+id/etBowler" android:layout_width="wrap_content" android:text="Bowler" android:textColor="#2E7D32" android:background="@null" android:inputType="textPersonName"/>
+                        <TextView android:id="@+id/etBowlerOvers" android:text="0.0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="numberDecimal"/>
+                        <TextView android:id="@+id/etBowlerMaiden" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etBowlerRuns" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                        <TextView android:id="@+id/etBowlerWickets" android:text="0" android:gravity="center" android:paddingHorizontal="12dp" android:background="@null" android:inputType="number"/>
+                    </TableRow>
+                </TableLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                android:layout_marginBottom="8dp">
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:columnCount="3">
+
+                    <Button
+                        android:id="@+id/cbWide"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Wide"
+                        android:backgroundTint="#2E7D32"
+                        android:textColor="#FFFFFF"
+                        android:layout_margin="4dp" />
+
+                    <Button
+                        android:id="@+id/cbNoBall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No Ball"
+                        android:backgroundTint="#2E7D32"
+                        android:textColor="#FFFFFF"
+                        android:layout_margin="4dp" />
+
+                    <Button
+                        android:id="@+id/cbByes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Byes"
+                        android:backgroundTint="#2E7D32"
+                        android:textColor="#FFFFFF"
+                        android:layout_margin="4dp" />
+
+                    <Button
+                        android:id="@+id/cbLegByes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Leg Byes"
+                        android:backgroundTint="#2E7D32"
+                        android:textColor="#FFFFFF"
+                        android:layout_margin="4dp" />
+
+                    <Button
+                        android:id="@+id/cbWicket"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wicket"
+                        android:backgroundTint="#D32F2F"
+                        android:textColor="#FFFFFF"
+                        android:layout_margin="4dp" />
+
+                    <Button android:id="@+id/btnUndo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Undo" android:backgroundTint="#2E7D32" />
+                </GridLayout>
+            </androidx.cardview.widget.CardView>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="4"
+                android:padding="4dp"
+                android:layout_gravity="center">
+                <Button android:id="@+id/btn0" android:layout_width="70dp" android:layout_height="70dp" android:text="0" android:background="@drawable/circle_button" android:layout_margin="6dp"/>
+                <Button android:id="@+id/btn1" android:layout_width="70dp" android:layout_height="70dp" android:text="1" android:background="@drawable/circle_button" android:layout_margin="6dp"/>
+                <Button android:id="@+id/btn2" android:layout_width="70dp" android:layout_height="70dp" android:text="2" android:background="@drawable/circle_button" android:layout_margin="6dp"/>
+                <Button android:id="@+id/btn3" android:layout_width="70dp" android:layout_height="70dp" android:text="3" android:background="@drawable/circle_button" android:layout_margin="6dp"/>
+                <Button android:id="@+id/btn4" android:layout_width="70dp" android:layout_height="70dp" android:text="4" android:background="@drawable/circle_button" android:layout_margin="6dp"/>
+                <Button android:id="@+id/btn5" android:layout_width="70dp" android:layout_height="70dp" android:text="5" android:background="@drawable/circle_button" android:layout_margin="6dp"/>
+                <Button android:id="@+id/btn6" android:layout_width="70dp" android:layout_height="70dp" android:text="6" android:background="@drawable/circle_button" android:layout_margin="6dp"/>
+            </GridLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

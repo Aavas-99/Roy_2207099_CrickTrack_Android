@@ -35,7 +35,9 @@ public class AdminDashboard1 extends AppCompatActivity {
 
 
         button.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, CreateMatch.class);
+            startActivity(intent);
+            finish();
         });
 
         button2.setOnClickListener(v -> {

@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Roy_2207099_CrickTrack_Android">
         <activity
+            android:name=".MatchSummary"
+            android:exported="false" />
+        <activity
+            android:name=".AdminDatabase"
+            android:exported="false" />
+        <activity
             android:name=".ScoreUpdate"
             android:exported="false" />
         <activity

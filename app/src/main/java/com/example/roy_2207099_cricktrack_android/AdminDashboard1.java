@@ -41,7 +41,9 @@ public class AdminDashboard1 extends AppCompatActivity {
         });
 
         button2.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, AdminDatabase.class);
+            startActivity(intent);
+            finish();
         });
 
         button3.setOnClickListener(v -> {

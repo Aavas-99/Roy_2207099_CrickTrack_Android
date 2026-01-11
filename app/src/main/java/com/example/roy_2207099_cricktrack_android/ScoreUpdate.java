@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,10 +52,10 @@ public class ScoreUpdate extends AppCompatActivity {
     private ArrayList<Batsman> batsmenStats = new ArrayList<>();
     private ArrayList<Bowler> bowlerStats = new ArrayList<>();
     private ArrayList<BallEvent> ballHistory = new ArrayList<>();
-    private EditText etInningsInfo, etScore, etOvers;
-    private EditText etStriker, etStrikerRuns, etStrikerBalls;
-    private EditText etNonStriker, etNonStrikerRuns, etNonStrikerBalls;
-    private EditText etBowler, etBowlerOvers, etBowlerMaiden, etBowlerRuns, etBowlerWickets;
+    private TextView etInningsInfo, etScore, etOvers;
+    private TextView etStriker, etStrikerRuns, etStrikerBalls;
+    private TextView etNonStriker, etNonStrikerRuns, etNonStrikerBalls;
+    private TextView etBowler, etBowlerOvers, etBowlerMaiden, etBowlerRuns, etBowlerWickets;
     private Button cbWide, cbNoBall, cbByes, cbLegByes, cbWicket, btnUndo;
     private boolean wideSelected = false, noBallSelected = false, byesSelected = false, legByesSelected = false, wicketSelected = false;
 
@@ -84,21 +85,17 @@ public class ScoreUpdate extends AppCompatActivity {
         etInningsInfo = findViewById(R.id.etInningsInfo);
         etScore = findViewById(R.id.etScore);
         etOvers = findViewById(R.id.etOvers);
-
         etStriker = findViewById(R.id.etStriker);
         etStrikerRuns = findViewById(R.id.etStrikerRuns);
         etStrikerBalls = findViewById(R.id.etStrikerBalls);
-
         etNonStriker = findViewById(R.id.etNonStriker);
         etNonStrikerRuns = findViewById(R.id.etNonStrikerRuns);
         etNonStrikerBalls = findViewById(R.id.etNonStrikerBalls);
-
         etBowler = findViewById(R.id.etBowler);
         etBowlerOvers = findViewById(R.id.etBowlerOvers);
         etBowlerMaiden = findViewById(R.id.etBowlerMaiden);
         etBowlerRuns = findViewById(R.id.etBowlerRuns);
         etBowlerWickets = findViewById(R.id.etBowlerWickets);
-
         cbWide = findViewById(R.id.cbWide);
         cbNoBall = findViewById(R.id.cbNoBall);
         cbByes = findViewById(R.id.cbByes);
@@ -111,12 +108,8 @@ public class ScoreUpdate extends AppCompatActivity {
     }
 
     private void setupUtilityButtons() {
-        cbWide.setOnClickListener(v -> {
-            wideSelected = !wideSelected; updateToggleVisual(cbWide, wideSelected);
-        });
-        cbNoBall.setOnClickListener(v -> {
-            noBallSelected = !noBallSelected; updateToggleVisual(cbNoBall, noBallSelected);
-        });
+        cbWide.setOnClickListener(v -> { wideSelected = !wideSelected; updateToggleVisual(cbWide, wideSelected); });
+        cbNoBall.setOnClickListener(v -> { noBallSelected = !noBallSelected; updateToggleVisual(cbNoBall, noBallSelected); });
         cbByes.setOnClickListener(v -> {
             byesSelected = !byesSelected; updateToggleVisual(cbByes, byesSelected);
             if (byesSelected) {
@@ -135,9 +128,7 @@ public class ScoreUpdate extends AppCompatActivity {
                 });
             }
         });
-        cbWicket.setOnClickListener(v -> {
-            wicketSelected = !wicketSelected; updateToggleVisual(cbWicket, wicketSelected);
-        });
+        cbWicket.setOnClickListener(v -> { wicketSelected = !wicketSelected; updateToggleVisual(cbWicket, wicketSelected); });
     }
 
     private void setupRunButtons() {
@@ -146,18 +137,15 @@ public class ScoreUpdate extends AppCompatActivity {
             final int runs = i;
             View v = findViewById(runButtons[i]);
             if (v != null) v.setOnClickListener(view -> {
-                boolean isWide = wideSelected;
-                boolean isNo = noBallSelected;
-                boolean isWicket = wicketSelected;
-                if (isWide) {
+                if (wideSelected) {
                     handleBall(runs + 1, true, false, false, false);
                     wideSelected = false; updateToggleVisual(cbWide, false);
-                } else if (isNo) {
-                    handleBall(runs+1, true, false, false, true);
+                } else if (noBallSelected) {
+                    handleBall(runs + 1, true, false, false, true);
                     noBallSelected = false; updateToggleVisual(cbNoBall, false);
                     isFreeHit = true;
                 } else {
-                    handleBall(runs, false, isWicket, false, false);
+                    handleBall(runs, false, wicketSelected, false, false);
                     wicketSelected = false; updateToggleVisual(cbWicket, false);
                 }
             });
@@ -168,227 +156,188 @@ public class ScoreUpdate extends AppCompatActivity {
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    Toast.makeText(ScoreUpdate.this, "Match data not found", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                battingTeam = snapshot.child("toss_winner").getValue(String.class);
-                assert battingTeam != null;
-                if(battingTeam.equals(snapshot.child("team_a").getValue(String.class))){
-                    bowlingTeam = snapshot.child("team_b").getValue(String.class);
-                }
-                else{
-                    bowlingTeam = snapshot.child("team_a").getValue(String.class);
-                }
-                etInningsInfo.setText(battingTeam + ", 1st inning");
-                Integer ov = snapshot.child("overs").getValue(Integer.class);
-                if (ov != null) oversLimit = ov;
-                stadium = snapshot.child("stadium").getValue(String.class);
-                date = snapshot.child("date").getValue(String.class);
+                if (!snapshot.exists()) return;
+
+                String teamA = snapshot.child("team_a").getValue(String.class);
+                String teamB = snapshot.child("team_b").getValue(String.class);
                 tossWinner = snapshot.child("toss_winner").getValue(String.class);
                 decision = snapshot.child("decision").getValue(String.class);
 
-                Object fitObj = snapshot.child("first_innings_total").getValue();
-                if (fitObj != null) {
-                    try {
-                        firstInningsTotal = Integer.parseInt(fitObj.toString());
-                        if (!firstInnings) updateTargetUI();
-                    } catch (Exception ignored) {}
+                if ("Bat".equalsIgnoreCase(decision)) {
+                    battingTeam = tossWinner;
+                    bowlingTeam = tossWinner.equals(teamA) ? teamB : teamA;
+                } else {
+                    battingTeam = tossWinner.equals(teamA) ? teamB : teamA;
+                    bowlingTeam = tossWinner;
                 }
+
+                etInningsInfo.setText(battingTeam + ", 1st inning");
+                oversLimit = snapshot.child("overs").getValue(Integer.class) != null ? snapshot.child("overs").getValue(Integer.class) : 20;
+                stadium = snapshot.child("stadium").getValue(String.class);
+                date = snapshot.child("date").getValue(String.class);
 
                 battingPlayers.clear(); bowlingPlayers.clear();
-                for (DataSnapshot child : snapshot.child("players_a").getChildren()) {
-                    String p = child.child("playerName").getValue(String.class);
-                    if (p != null && !p.isEmpty()) battingPlayers.add(p);
-                }
-                for (DataSnapshot child : snapshot.child("players_b").getChildren()) {
-                    String p = child.child("playerName").getValue(String.class);
-                    if (p != null && !p.isEmpty()) bowlingPlayers.add(p);
-                }
+                String batPath = battingTeam.equals(teamA) ? "players_a" : "players_b";
+                String bowlPath = bowlingTeam.equals(teamA) ? "players_a" : "players_b";
 
-                if (battingPlayers.isEmpty()) {
-                    battingPlayers.add("Batsman 1");
-                    battingPlayers.add("Batsman 2");
-                    battingPlayers.add("Batsman 3");
-                    battingPlayers.add("Batsman 4");
-                    battingPlayers.add("Batsman 5");
-                    battingPlayers.add("Batsman 6");
+                for (DataSnapshot child : snapshot.child(batPath).getChildren()) {
+                    String p = child.child("playerName").getValue(String.class);
+                    if (p != null) battingPlayers.add(p);
                 }
-                if (bowlingPlayers.isEmpty()) {
-                    bowlingPlayers.addAll(battingPlayers);
+                for (DataSnapshot child : snapshot.child(bowlPath).getChildren()) {
+                    String p = child.child("playerName").getValue(String.class);
+                    if (p != null) bowlingPlayers.add(p);
                 }
 
                 batsmenStats.clear(); bowlerStats.clear();
                 for (String p : battingPlayers) batsmenStats.add(new Batsman(p));
                 for (String p : bowlingPlayers) bowlerStats.add(new Bowler(p));
 
-                strikerIndex = 0; nonStrikerIndex = 1; currentBowlerIndex = 0;
-
                 updateLabels();
-                loadSavedStatsFromFirebase();
+                saveStatsToFirebase();
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ScoreUpdate.this, "Error loading match: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void loadSavedStatsFromFirebase() {
-        dbRef.child("batsman_stats").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot b : snapshot.getChildren()) {
-                    String name = b.getKey();
-                    if (name == null) continue;
-                    MatchModels.BatsmanStat stat = b.getValue(MatchModels.BatsmanStat.class);
-                    if (stat != null) {
-                        for (Batsman bs : batsmenStats) {
-                            if (bs.getName().equals(stat.name)) {
-                                bs.setRuns(stat.runs);
-                                bs.setBalls(stat.balls);
-                                bs.setOut(stat.is_out == 1);
-                                break;
-                            }
-                        }
-                    }
-                }
-                dbRef.child("bowler_stats").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot2) {
-                        for (DataSnapshot b2 : snapshot2.getChildren()) {
-                            String name = b2.getKey(); if (name == null) continue;
-                            MatchModels.BowlerStat stat = b2.getValue(MatchModels.BowlerStat.class);
-                            if (stat != null) {
-                                for (Bowler bw : bowlerStats) {
-                                    if (bw.getName().equals(stat.name)) {
-                                        bw.setBallsBowled(stat.balls_bowled);
-                                        bw.setRuns(stat.runs);
-                                        bw.setWickets(stat.wickets);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        updateLabels();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) { }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
     private void updateLabels() {
-        if (strikerIndex >= 0 && strikerIndex < batsmenStats.size()) {
-            etStriker.setText(batsmenStats.get(strikerIndex).getName());
-            etStrikerRuns.setText(String.valueOf(batsmenStats.get(strikerIndex).getRuns()));
-            etStrikerBalls.setText(String.valueOf(batsmenStats.get(strikerIndex).getBalls()));
-        } else {
-            etStriker.setText("-");
-            etStrikerRuns.setText("0");
-            etStrikerBalls.setText("0");
+        if (strikerIndex != -1 && strikerIndex < batsmenStats.size()) {
+            Batsman s = batsmenStats.get(strikerIndex);
+            etStriker.setText(s.getName());
+            etStrikerRuns.setText(String.valueOf(s.getRuns()));
+            etStrikerBalls.setText(String.valueOf(s.getBalls()));
         }
-        if (nonStrikerIndex >= 0 && nonStrikerIndex < batsmenStats.size()) {
-            etNonStriker.setText(batsmenStats.get(nonStrikerIndex).getName());
-            etNonStrikerRuns.setText(String.valueOf(batsmenStats.get(nonStrikerIndex).getRuns()));
-            etNonStrikerBalls.setText(String.valueOf(batsmenStats.get(nonStrikerIndex).getBalls()));
-        } else {
-            etNonStriker.setText("-");
-            etNonStrikerRuns.setText("0");
-            etNonStrikerBalls.setText("0");
+        if (nonStrikerIndex != -1 && nonStrikerIndex < batsmenStats.size()) {
+            Batsman ns = batsmenStats.get(nonStrikerIndex);
+            etNonStriker.setText(ns.getName());
+            etNonStrikerRuns.setText(String.valueOf(ns.getRuns()));
+            etNonStrikerBalls.setText(String.valueOf(ns.getBalls()));
         }
-
-        if (currentBowlerIndex >= 0 && currentBowlerIndex < bowlerStats.size()) {
-            etBowler.setText(bowlerStats.get(currentBowlerIndex).getName());
-            etBowlerRuns.setText(String.valueOf(bowlerStats.get(currentBowlerIndex).getRuns()));
-            etBowlerWickets.setText(String.valueOf(bowlerStats.get(currentBowlerIndex).getWickets()));
-            etBowlerOvers.setText(bowlerStats.get(currentBowlerIndex).getOvers() + ".0");
+        if (currentBowlerIndex != -1 && currentBowlerIndex < bowlerStats.size()) {
+            Bowler b = bowlerStats.get(currentBowlerIndex);
+            etBowler.setText(b.getName());
+            etBowlerRuns.setText(String.valueOf(b.getRuns()));
+            etBowlerWickets.setText(String.valueOf(b.getWickets()));
+            etBowlerOvers.setText(b.getOvers() + "." + (b.getBallsBowled() % 6));
         }
-
         etScore.setText(String.format(Locale.US, "%d - %d", totalRuns, wickets));
         etOvers.setText(String.format(Locale.US, "(%d.%d)", currentOver, currentBall));
     }
 
-    private void updateTargetUI() {
-
-    }
-
     private void handleBall(int runs, boolean isExtra, boolean isWicket, boolean isblb, boolean isNo) {
-        if (strikerIndex == -1) {
-            saveStatsToFirebase();
-            Toast.makeText(this, "Innings Over: All batsmen are out", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        boolean actualWicket = isWicket;
-        if (isFreeHit && isWicket) {
-            Toast.makeText(this, "Free Hit: wicket not allowed", Toast.LENGTH_SHORT).show();
-            actualWicket = false;
-        }
+        if (strikerIndex == -1) return;
 
-        BallEvent event = new BallEvent(strikerIndex, nonStrikerIndex, currentBowlerIndex, runs, isExtra, isWicket, currentOver, currentBall, wickets, totalRuns, isblb, isNo);
-        ballHistory.add(event);
+        boolean actualWicket = isWicket && !isFreeHit;
+        ballHistory.add(new BallEvent(strikerIndex, nonStrikerIndex, currentBowlerIndex, runs, isExtra, isWicket, currentOver, currentBall, wickets, totalRuns, isblb, isNo));
 
-        if (isblb) {
+        if (isblb || !isExtra) {
             Batsman striker = batsmenStats.get(strikerIndex);
+            if (!isblb) striker.setRuns(striker.getRuns() + runs);
             striker.setBalls(striker.getBalls() + 1);
-            totalRuns += runs;
+
             Bowler bowler = bowlerStats.get(currentBowlerIndex);
             bowler.setRuns(bowler.getRuns() + runs);
             bowler.incrementBallsBowled();
-            isFreeHit = false;
-        } else if (!isExtra) {
-            Batsman striker = batsmenStats.get(strikerIndex);
-            striker.setRuns(striker.getRuns() + runs);
-            striker.setBalls(striker.getBalls() + 1);
             totalRuns += runs;
-            Bowler bowler = bowlerStats.get(currentBowlerIndex);
-            bowler.setRuns(bowler.getRuns() + runs);
-            bowler.incrementBallsBowled();
             isFreeHit = false;
         } else {
             totalRuns += runs;
-            if (isNo) isFreeHit = true;
             bowlerStats.get(currentBowlerIndex).setRuns(bowlerStats.get(currentBowlerIndex).getRuns() + runs);
-        }
-
-        if (!firstInnings && firstInningsTotal != -1 && totalRuns > firstInningsTotal) {
-            int remainingWickets = Math.max(0, battingPlayers.size() - wickets);
-            String resultText = battingTeam + " won by " + remainingWickets + " wickets";
-            saveStatsToFirebase();
-            dbRef.child("result").setValue(resultText);
-            Toast.makeText(this, "Match Over: " + resultText, Toast.LENGTH_LONG).show();
-            finish();
-            return;
+            if (isNo) isFreeHit = true;
         }
 
         if (actualWicket) {
             wickets++;
-            Bowler bw = bowlerStats.get(currentBowlerIndex);
-            bw.setWickets(bw.getWickets() + 1);
+            bowlerStats.get(currentBowlerIndex).setWickets(bowlerStats.get(currentBowlerIndex).getWickets() + 1);
             batsmenStats.get(strikerIndex).setOut(true);
             strikerIndex = getNextBatsman();
             if (strikerIndex == -1) { endInnings(); return; }
         }
 
-        if (!isExtra) currentBall++;
-        if (currentBall == 6) {
-            currentOver++; currentBall = 0; swapStriker(); currentBowlerIndex = getNextBowler();
+        if (!isExtra) {
+            currentBall++;
+            if (currentBall == 6) {
+                currentOver++; currentBall = 0;
+                swapStriker();
+                currentBowlerIndex = getNextBowler();
+            }
+            if (runs == 1 || runs == 3 || runs == 5) swapStriker();
         }
-        if (!isExtra && (runs == 1 || runs == 3)) swapStriker();
+
         if (currentOver == oversLimit) { endInnings(); return; }
+        if (!firstInnings && totalRuns > firstInningsTotal) { endInnings(); return; }
 
         updateLabels();
         saveStatsToFirebase();
     }
 
+    private void endInnings() {
+        saveStatsToFirebase();
+        if (firstInnings) {
+            firstInningsTotal = totalRuns;
+            firstInningsBattingTeam = battingTeam;
+            dbRef.child("first_innings_total").setValue(firstInningsTotal);
+
+            firstInnings = false;
+            String temp = battingTeam; battingTeam = bowlingTeam; bowlingTeam = temp;
+            ArrayList<String> tempPlayers = new ArrayList<>(battingPlayers);
+            battingPlayers = new ArrayList<>(bowlingPlayers);
+            bowlingPlayers = tempPlayers;
+
+            totalRuns = 0; wickets = 0; currentOver = 0; currentBall = 0;
+            batsmenStats.clear(); bowlerStats.clear();
+            for (String p : battingPlayers) batsmenStats.add(new Batsman(p));
+            for (String p : bowlingPlayers) bowlerStats.add(new Bowler(p));
+
+            strikerIndex = 0; nonStrikerIndex = 1; currentBowlerIndex = 0;
+            etInningsInfo.setText(battingTeam + ", 2nd inning");
+            updateLabels();
+            Toast.makeText(this, "Second Innings Started", Toast.LENGTH_SHORT).show();
+        } else {
+            String result;
+            if (totalRuns > firstInningsTotal) result = battingTeam + " won by " + (battingPlayers.size() - wickets) + " wickets";
+            else if (totalRuns < firstInningsTotal) result = firstInningsBattingTeam + " won by " + (firstInningsTotal - totalRuns) + " runs";
+            else result = "Match Tied";
+
+            dbRef.child("result").setValue(result);
+            Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+    private void saveStatsToFirebase() {
+        if (dbRef == null) return;
+        Map<String, Object> updates = new HashMap<>();
+
+        for (Batsman b : batsmenStats) {
+            String key = battingTeam + "_" + b.getName();
+            Map<String, Object> stat = new HashMap<>();
+            stat.put("name", b.getName());
+            stat.put("runs", b.getRuns());
+            stat.put("balls", b.getBalls());
+            stat.put("is_out", b.isOut() ? 1 : 0);
+            stat.put("team", battingTeam);
+            updates.put("batsman_stats/" + key, stat);
+        }
+
+        for (Bowler b : bowlerStats) {
+            String key = bowlingTeam + "_" + b.getName();
+            Map<String, Object> stat = new HashMap<>();
+            stat.put("name", b.getName());
+            stat.put("balls_bowled", b.getBallsBowled());
+            stat.put("runs", b.getRuns());
+            stat.put("wickets", b.getWickets());
+            stat.put("team", bowlingTeam);
+            updates.put("bowler_stats/" + key, stat);
+        }
+
+        updates.put("score", totalRuns + " - " + wickets);
+        updates.put("overs_played", currentOver + "." + currentBall);
+        dbRef.updateChildren(updates);
+    }
+
     private void swapStriker() {
-        int tmp = strikerIndex; strikerIndex = nonStrikerIndex; nonStrikerIndex = tmp; updateLabels();
+        int tmp = strikerIndex; strikerIndex = nonStrikerIndex; nonStrikerIndex = tmp;
     }
 
     private int getNextBatsman() {
@@ -399,187 +348,99 @@ public class ScoreUpdate extends AppCompatActivity {
     }
 
     private int getNextBowler() {
-        currentBowlerIndex++;
-        if (currentBowlerIndex >= bowlerStats.size()) currentBowlerIndex = 0;
-        return currentBowlerIndex;
-    }
-
-    private void endInnings() {
-        saveStatsToFirebase();
-        Toast.makeText(this, "Innings Over for " + battingTeam, Toast.LENGTH_SHORT).show();
-        if (firstInnings) {
-            firstInningsTotal = totalRuns;
-            firstInningsBattingTeam = battingTeam;
-            dbRef.child("first_innings_total").setValue(firstInningsTotal);
-
-            firstInnings = false;
-            String tmpTeam = battingTeam; battingTeam = bowlingTeam; bowlingTeam = tmpTeam;
-            etInningsInfo.setText(battingTeam+ ", 1st Innings");
-            ArrayList<String> tmpPlayers = battingPlayers; battingPlayers = bowlingPlayers; bowlingPlayers = tmpPlayers;
-
-            currentOver = 0; currentBall = 0; wickets = 0; totalRuns = 0;
-            batsmenStats.clear(); bowlerStats.clear();
-            for (String p : battingPlayers) batsmenStats.add(new Batsman(p));
-            for (String p : bowlingPlayers) bowlerStats.add(new Bowler(p));
-            strikerIndex = 0; nonStrikerIndex = 1; currentBowlerIndex = 0;
-            updateLabels();
-        } else {
-            String resultText;
-            etInningsInfo.setText(battingTeam+ ", 2nd Innings");
-            if (firstInningsTotal == -1) resultText = "Result not available";
-            else {
-                if (totalRuns > firstInningsTotal) {
-                    int remainingWickets = Math.max(0, battingPlayers.size() - wickets);
-                    resultText = battingTeam + " won by " + remainingWickets + " wickets";
-                } else if (totalRuns == firstInningsTotal) resultText = "Match tied";
-                else resultText = firstInningsBattingTeam + " won by " + (firstInningsTotal - totalRuns) + " runs";
-            }
-            dbRef.child("result").setValue(resultText);
-            saveStatsToFirebase();
-            Toast.makeText(this, "Match Over: " + resultText, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, AdminDashboard1.class);
-            startActivity(intent);
-            finish();
-        }
+        return (currentBowlerIndex + 1) % bowlerStats.size();
     }
 
     private void undoLastBall() {
-        if (ballHistory.isEmpty()) return;
+        if (ballHistory.isEmpty()) {
+            Toast.makeText(this, "No balls to undo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         BallEvent last = ballHistory.remove(ballHistory.size() - 1);
-        strikerIndex = last.strikerIndex; nonStrikerIndex = last.nonStrikerIndex; currentBowlerIndex = last.bowlerIndex;
-        currentOver = last.over; currentBall = last.ball; wickets = last.wickets; totalRuns = last.runsTotal;
+        strikerIndex = last.strikerIndex;
+        nonStrikerIndex = last.nonStrikerIndex;
+        currentBowlerIndex = last.bowlerIndex;
+        currentOver = last.over;
+        currentBall = last.ball;
+        wickets = last.wickets;
+        totalRuns = last.runsTotal;
         isFreeHit = false;
 
-        for (Batsman b : batsmenStats) b.reset();
-        for (Bowler b : bowlerStats) b.reset();
-
+        for (Batsman b : batsmenStats) {
+            b.setRuns(0);
+            b.setBalls(0);
+            b.setOut(false);
+        }
+        for (Bowler b : bowlerStats) {
+            b.setRuns(0);
+            b.setBallsBowled(0);
+            b.setWickets(0);
+        }
         for (BallEvent ev : ballHistory) {
-            if (ev.blb) {
+            if (ev.blb || !ev.isExtra) {
                 Batsman s = batsmenStats.get(ev.strikerIndex);
+                if (!ev.blb) s.setRuns(s.getRuns() + ev.runs);
                 s.setBalls(s.getBalls() + 1);
-                Bowler bow = bowlerStats.get(ev.bowlerIndex);
-                bow.setRuns(bow.getRuns() + ev.runs);
-                bow.incrementBallsBowled();
-                isFreeHit = false;
-            } else if (!ev.isExtra) {
-                Batsman s = batsmenStats.get(ev.strikerIndex);
-                s.setRuns(s.getRuns() + ev.runs);
-                s.setBalls(s.getBalls() + 1);
+
                 Bowler bow = bowlerStats.get(ev.bowlerIndex);
                 bow.setRuns(bow.getRuns() + ev.runs);
                 bow.incrementBallsBowled();
                 isFreeHit = false;
             } else {
-                if (ev.no) isFreeHit = true;
                 Bowler bow = bowlerStats.get(ev.bowlerIndex);
                 bow.setRuns(bow.getRuns() + ev.runs);
+                if (ev.no) isFreeHit = true;
             }
-            if (ev.isWicket) {
+
+            if (ev.isWicket && !isFreeHit) {
                 Bowler bow = bowlerStats.get(ev.bowlerIndex);
                 bow.setWickets(bow.getWickets() + 1);
                 batsmenStats.get(ev.strikerIndex).setOut(true);
             }
         }
-
         updateLabels();
         saveStatsToFirebase();
     }
 
-    private void saveStatsToFirebase() {
-        if (dbRef == null) return;
-        Map<String, MatchModels.BatsmanStat> batsMap = new HashMap<>();
-        for (Batsman b : batsmenStats) {
-            MatchModels.BatsmanStat stat = new MatchModels.BatsmanStat();
-            stat.name = b.getName();
-            stat.runs = b.getRuns();
-            stat.balls = b.getBalls();
-            stat.is_out = b.isOut() ? 1 : 0;
-            stat.team = battingTeam;
-            batsMap.put(stat.name, stat);
-        }
-        dbRef.child("batsman_stats").setValue(batsMap);
-
-        Map<String, MatchModels.BowlerStat> bowlMap = new HashMap<>();
-        for (Bowler b : bowlerStats) {
-            MatchModels.BowlerStat stat = new MatchModels.BowlerStat();
-            stat.name = b.getName();
-            stat.balls_bowled = b.getBallsBowled();
-            stat.runs = b.getRuns();
-            stat.wickets = b.getWickets();
-            stat.team = bowlingTeam;
-            bowlMap.put(stat.name, stat);
-        }
-        dbRef.child("bowler_stats").setValue(bowlMap);
-        dbRef.child("score").setValue(totalRuns + " - " + wickets);
-        dbRef.child("overs_played").setValue(currentOver + "." + currentBall);
-    }
+    private void updateToggleVisual(Button btn, boolean sel) { btn.setAlpha(sel ? 0.5f : 1.0f); }
 
     private void askRunsWithNumberPicker(String title, final NumberPickedCallback cb) {
         NumberPicker np = new NumberPicker(this);
-        np.setMinValue(0); np.setMaxValue(6); np.setValue(1);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title);
-        builder.setView(np);
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            cb.onPicked(np.getValue());
-        });
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
-    }
-
-    private void updateToggleVisual(Button btn, boolean sel) {
-        btn.setAlpha(sel ? 0.6f : 1.0f);
+        np.setMinValue(0); np.setMaxValue(6);
+        new AlertDialog.Builder(this).setTitle(title).setView(np)
+                .setPositiveButton("OK", (d, w) -> cb.onPicked(np.getValue())).show();
     }
 
     private interface NumberPickedCallback { void onPicked(int value); }
     public static class Batsman {
-        private final String name;
-        private int runs = 0;
-        private int balls = 0;
-        private boolean out = false;
-        public Batsman(String name) { this.name = name; }
+        private String name; private int runs, balls; private boolean out;
+        public Batsman(String n) { this.name = n; }
         public String getName() { return name; }
-        public int getRuns() { return runs; }
-        public void setRuns(int r) { runs = r; }
-        public int getBalls() { return balls; }
-        public void setBalls(int b) { balls = b; }
-        public boolean isOut() { return out; }
-        public void setOut(boolean o) { out = o; }
-        public void reset() { runs = 0; balls = 0; out = false; }
+        public int getRuns() { return runs; } public void setRuns(int r) { runs = r; }
+        public int getBalls() { return balls; } public void setBalls(int b) { balls = b; }
+        public boolean isOut() { return out; } public void setOut(boolean o) { out = o; }
     }
 
     public static class Bowler {
-        private final String name;
-        private int ballsBowled = 0;
-        private int runs = 0;
-        private int wickets = 0;
-        public Bowler(String name) { this.name = name; }
+        private String name; private int ballsBowled, runs, wickets;
+        public Bowler(String n) { this.name = n; }
         public String getName() { return name; }
-        public int getOvers() { return ballsBowled / 6; }
-        public int getRuns() { return runs; }
-        public void setRuns(int r) { runs = r; }
-        public int getWickets() { return wickets; }
-        public void setWickets(int w) { wickets = w; }
+        public int getBallsBowled() { return ballsBowled; } public void setBallsBowled(int b) { ballsBowled = b; }
         public void incrementBallsBowled() { ballsBowled++; }
-        public int getBallsBowled() { return ballsBowled; }
-        public void setBallsBowled(int b) { ballsBowled = b; }
-        public void reset() { ballsBowled = 0; runs = 0; wickets = 0; }
-        public void setBallsBowledPublic(int b) { ballsBowled = b; }
+        public int getRuns() { return runs; } public void setRuns(int r) { runs = r; }
+        public int getWickets() { return wickets; } public void setWickets(int w) { wickets = w; }
+        public int getOvers() { return ballsBowled / 6; }
         public void setBallsBowledDirect(int b) { ballsBowled = b; }
     }
 
     private static class BallEvent {
-        final int strikerIndex, nonStrikerIndex, bowlerIndex;
-        final int runs, over, ball, wickets, runsTotal;
-        final boolean isExtra, isWicket, blb, no;
-        BallEvent(int s, int ns, int b, int r, boolean extra, boolean wicket, int o, int bl, int w, int rt, boolean isblb, boolean isNo) {
-            strikerIndex = s; nonStrikerIndex = ns; bowlerIndex = b;
-            runs = r; isExtra = extra; isWicket = wicket; blb = isblb; no = isNo;
-            over = o; ball = bl; wickets = w; runsTotal = rt;
+        int strikerIndex, nonStrikerIndex, bowlerIndex, runs, over, ball, wickets, runsTotal;
+        boolean isExtra, isWicket, blb, no;
+        BallEvent(int s, int ns, int b, int r, boolean ex, boolean w, int ov, int bl, int wk, int rt, boolean blb, boolean no) {
+            this.strikerIndex = s; this.nonStrikerIndex = ns; this.bowlerIndex = b;
+            this.runs = r; this.isExtra = ex; this.isWicket = w; this.over = ov;
+            this.ball = bl; this.wickets = wk; this.runsTotal = rt; this.blb = blb; this.no = no;
         }
     }
 }
-
-
-
-

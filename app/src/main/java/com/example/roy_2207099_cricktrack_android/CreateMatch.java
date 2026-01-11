@@ -30,7 +30,11 @@ public class CreateMatch extends AppCompatActivity {
         });
 
         findViewById(R.id.btnStart).setOnClickListener(v -> onStartMatch());
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        findViewById(R.id.btnBack).setOnClickListener(v ->{
+            Intent intent = new Intent(this, AdminDashboard1.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void onStartMatch() {

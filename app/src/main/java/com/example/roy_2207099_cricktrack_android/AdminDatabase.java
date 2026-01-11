@@ -25,7 +25,11 @@ public class AdminDatabase extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_database);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish()); // Go back to hello-view (Main)
+        toolbar.setNavigationOnClickListener(v -> {
+            Intent intent = new Intent(AdminDatabase.this, AdminDashboard1.class);
+            startActivity(intent);
+            finish();
+        });
 
         rvMatches = findViewById(R.id.rvMatches);
         rvMatches.setLayoutManager(new LinearLayoutManager(this));

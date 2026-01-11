@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class AdminDashboard1 extends AppCompatActivity {
 
     TextView textView, textView2;
-    Button button, button2 , button3;
+    Button button, button2 , button3 , button_requests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,8 @@ public class AdminDashboard1 extends AppCompatActivity {
         button = findViewById(R.id.button);
         button2 = findViewById(R.id.button2);
         button3 = findViewById(R.id.button3);
+        button_requests = findViewById(R.id.button_requests);
+
 
 
         button.setOnClickListener(v -> {
@@ -48,6 +50,12 @@ public class AdminDashboard1 extends AppCompatActivity {
 
         button3.setOnClickListener(v -> {
             Intent intent = new Intent(this, AdminLogin.class);
+            startActivity(intent);
+            finish();
+        });
+
+        button_requests.setOnClickListener(v -> {
+            Intent intent = new Intent(this, Request.class);
             startActivity(intent);
             finish();
         });

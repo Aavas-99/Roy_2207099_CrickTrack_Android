@@ -47,7 +47,7 @@ public class ScoreUpdate extends AppCompatActivity {
     private boolean isFreeHit = false;
     private int strikerIndex = 0;
     private int nonStrikerIndex = 1;
-    private int currentBowlerIndex = 0;
+    private int currentBowlerIndex = 5;
 
     private ArrayList<Batsman> batsmenStats = new ArrayList<>();
     private ArrayList<Bowler> bowlerStats = new ArrayList<>();
@@ -171,7 +171,7 @@ public class ScoreUpdate extends AppCompatActivity {
                     bowlingTeam = tossWinner;
                 }
 
-                etInningsInfo.setText(battingTeam + ", 1st inning");
+                etInningsInfo.setText(battingTeam + ", 1st Innings");
                 oversLimit = snapshot.child("overs").getValue(Integer.class) != null ? snapshot.child("overs").getValue(Integer.class) : 20;
                 stadium = snapshot.child("stadium").getValue(String.class);
                 date = snapshot.child("date").getValue(String.class);
@@ -289,8 +289,8 @@ public class ScoreUpdate extends AppCompatActivity {
             for (String p : battingPlayers) batsmenStats.add(new Batsman(p));
             for (String p : bowlingPlayers) bowlerStats.add(new Bowler(p));
 
-            strikerIndex = 0; nonStrikerIndex = 1; currentBowlerIndex = 0;
-            etInningsInfo.setText(battingTeam + ", 2nd inning");
+            strikerIndex = 0; nonStrikerIndex = 1; currentBowlerIndex = 5;
+            etInningsInfo.setText(battingTeam + ", 2nd Innings");
             updateLabels();
             Toast.makeText(this, "Second Innings Started", Toast.LENGTH_SHORT).show();
         } else {
@@ -348,7 +348,8 @@ public class ScoreUpdate extends AppCompatActivity {
     }
 
     private int getNextBowler() {
-        return (currentBowlerIndex + 1) % bowlerStats.size();
+        if(currentBowlerIndex==3 ) return 5;
+        return (currentBowlerIndex - 1) % bowlerStats.size();
     }
 
     private void undoLastBall() {

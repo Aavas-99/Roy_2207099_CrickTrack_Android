@@ -11,12 +11,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class UserLogin extends AppCompatActivity {
 
     EditText loginEmail, loginPassword;
     Button btnLogin, btnBack;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +30,7 @@ public class UserLogin extends AppCompatActivity {
         setContentView(R.layout.activity_user_login);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         loginEmail = findViewById(R.id.loginEmail);
         loginPassword = findViewById(R.id.loginPassword);
@@ -56,14 +63,36 @@ public class UserLogin extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(this, UserDashboard1.class);
-                        startActivity(intent);
-                        finish();
+                        String uid = mAuth.getCurrentUser().getUid();
+                        fetchUserNameAndProceed(uid);
                     } else {
                         showAlert("Login Failed", "Invalid email or password.");
                     }
                 });
+    }
+
+    private void fetchUserNameAndProceed(String uid) {
+        mDatabase.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String name = "User";
+                if (snapshot.exists()) {
+                    name = snapshot.child("name").getValue(String.class);
+                }
+
+                UserSession.getInstance().setUserData(uid, name);
+
+                Toast.makeText(UserLogin.this, "Welcome " + name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(UserLogin.this, UserDashboard1.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                showAlert("Error", "Could not fetch user profile.");
+            }
+        });
     }
 
     private TextWatcher simpleWatcher(Runnable r) {

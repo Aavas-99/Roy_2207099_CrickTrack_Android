@@ -45,6 +45,15 @@ public class UserDashboard1 extends AppCompatActivity {
             }
         });
 
+        btnViewMatches = findViewById(R.id.btnViewMatches);
+
+        btnViewMatches.setOnClickListener(v -> {
+            Intent intent = new Intent(this, UserDatabase.class);
+            startActivity(intent);
+            finish();
+        });
+
+
 
         btnLogout.setOnClickListener(v -> {
             mAuth.signOut();
@@ -55,8 +64,6 @@ public class UserDashboard1 extends AppCompatActivity {
         });
 
 
-        btnViewMatches.setOnClickListener(v -> {
 
-        });
     }
 }
